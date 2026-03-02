@@ -32,7 +32,7 @@ begin
 			// cuenta si se presiona (button=0) y estaba suelto (buton state=0)
 			// Si la señal es estable por 20ms se considera valida	
 			if (button == 0 && button_state == 0) begin
-            if (counter_pressed < 25'd1000000)
+				if (counter_pressed < 25'd1000000) // cambiar a numero mas pequeño para la simulacion
                 counter_pressed <= counter_pressed + 1;
             else begin
                 button_state <= 1;

@@ -1,0 +1,37 @@
+module VGADemo(
+    input MAX10_CLK1_50,
+    output [3:0] vga_red,
+    output [3:0] vga_green,
+    output [3:0] vga_blue,
+    output hsync_out,
+    output vsync_out
+);
+
+wire inDisplayArea;
+wire [9:0] CounterX;
+wire [9:0] CounterY;
+
+// Generador de 25MHz
+reg pixel_tick = 0;
+always @(posedge MAX10_CLK1_50)
+    pixel_tick <= ~pixel_tick;
+
+hvsync_generator hvsync(
+    .clk(MAX10_CLK1_50),
+    .pixel_tick(pixel_tick),
+    .vga_h_sync(hsync_out),
+    .vga_v_sync(vsync_out),
+    .CounterX(CounterX),
+    .CounterY(CounterY),
+    .inDisplayArea(inDisplayArea)
+);
+
+// Lógica de ajedrez: cuadros de 64x64 píxeles
+wire is_white = CounterX[6] ^ CounterY[6];
+
+// Asignamos 4'b1111 (brillo máximo) si es blanco, 4'b0000 si es negro
+assign vga_red   = (inDisplayArea && is_white) ? 4'b1111 : 4'b0000;
+assign vga_green = (inDisplayArea && is_white) ? 4'b1111 : 4'b0000;
+assign vga_blue  = (inDisplayArea && is_white) ? 4'b1111 : 4'b0000;
+
+endmodule
